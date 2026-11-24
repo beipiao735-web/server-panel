@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>服务器管理 — beipiao.abc.sd</title>
+<meta name="description" content="个人服务器舰队管理面板：5 台服务器的状态、配置、限额与到期提醒。">
+<style>
+:root{--bg:#0f1419;--card:#1a222c;--card2:#212b36;--text:#e8eef4;--muted:#93a3b1;--line:#2c3947;--acc:#4da3ff;--ok:#35c48d;--warn:#ffb020;--bad:#ff6b6b}
+@media (prefers-color-scheme:light){:root{--bg:#f4f6f8;--card:#fff;--card2:#eef2f5;--text:#17212b;--muted:#5c6d7d;--line:#dde4ea;--acc:#0b6bcb}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text)}
+.wrap{max-width:920px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:24px;margin:0}.sub{color:var(--muted);font-size:13px;margin-top:6px;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}.stat b{font-size:24px;display:block}.stat span{font-size:12px;color:var(--muted)}
+.alert{background:var(--card);border:1px solid var(--warn);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.7;margin-bottom:14px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.tab{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:7px 14px;cursor:pointer;font-size:13px}
+.tab.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.search{width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.name{font-weight:700;font-size:17px}.role{color:var(--acc);font-size:12px;font-weight:600;margin-left:6px}
+.loc{color:var(--muted);font-size:12.5px;margin-top:3px}
+.badge{font-size:11.5px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.badge.on{color:var(--ok);border-color:var(--ok)}.badge.wait{color:var(--warn);border-color:var(--warn)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:12px;font-size:13.5px;line-height:1.6}
+.grid span{color:var(--muted);display:block;font-size:12px}
+.note{margin-top:10px;background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.65}
+.foot{color:var(--muted);font-size:12px;margin-top:24px;line-height:1.7;text-align:center}
+@media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🖥️ 服务器管理</h1>
+<div class="sub">beipiao.abc.sd · 个人舰队面板 · 在役 3 台由每周巡检照看，异常才报<br>公开版已脱敏：节点完整域名、出口 IP 尾段、UUID 与订阅链接不放在公开页面上。</div>
+
+<div class="stats">
+<div class="stat"><b>5</b><span>服务器总数</span></div>
+<div class="stat"><b>3</b><span>在役节点</span></div>
+<div class="stat"><b>2</b><span>待部署</span></div>
+<div class="stat"><b>4</b><span>所在国家/地区</span></div>
+</div>
+
+<div class="alert">⏰ <b>近期提醒：</b>Weeny 7 天试用档约 <b>2026-12-01</b> 到期，之后转 1 GB 永久免费；Cloady 本月流量已用 4.8 / 10 GB，<b>2026-12-01</b> 重置；beipiao.abc.sd 本站上线即解除 Yunamo「长期不解析约 30 天删域名」风险（原期限约 2026-12-23）。</div>
+
+<input class="search" id="q" placeholder="搜索：德国 / Hetzner / 限速 / 待部署…" oninput="render()">
+<div class="tabs" id="tabs"></div>
+<div id="list"></div>
+
+<div class="foot">数据核实于 2026-11-24 · Hostly / Komuta / Cloady 为在役舰队定编 · 其余平台已按决定停止，不再新增</div>
+</div>
+<script>
+const servers=[
+{name:"Hostly",role:"主力节点",loc:"德国 纽伦堡 · Hetzner",status:"在役",spec:"Free 计划 · 50 Core·h / 100 GiB·h",quota:"1 TiB 流量 / 30 天",exit:"116.203.*.*",speed:"实测约 5.9 Mbps，三台最快",note:"重点照料：每周巡检排第一，盯额度。2026-11-23 复测连通 3/3、账单 €0.00。"},
+{name:"Komuta",role:"德国备用",loc:"德国 de-east · Hetzner Falkenstein",status:"在役",spec:"dz-nano · 0.1 vCPU / 256 MB",quota:"450 唤醒小时 / 月 · 不限流量",exit:"91.98.*.*",speed:"出站限速 5 Mbps",note:"闲置 30 分钟睡，首连等约 1 分钟唤醒；出口 IP 已换新，国家/运营商未变。"},
+{name:"Cloady",role:"美国备用",loc:"美国 USW1",status:"在役",spec:"0.5 vCPU / 1 GB / 5 GB · 永久免费",quota:"出站 10 GB / 月 · CPU 4 小时 / 月",exit:"13.140.*.*",speed:"XHTTP，建连慢",note:"本月已用 4.8 GB，剩 5.2 GB 撑到 12-01 重置没问题；升 Nano 付费不可逆，未定。"},
+{name:"Weeny",role:"待部署 · 真 VM",loc:"芬兰 赫尔辛基 · Hetzner",status:"待部署",spec:"2 vCPU / 4 GB / 10 GB · Ubuntu 24.04 · root",quota:"试用约到 2026-12-01，后转 1 GB 永久免费",exit:"2.29.*.*",speed:"带宽标称最高 900 Mbps（共享）",note:"体检已过：真 VM 有 root。卡点：无 TUN 设备、无公网入站 IP，待试加载 TUN 再定能否搭节点。"},
+{name:"Nodaroo",role:"待部署 · 面板容器",loc:"瑞典 斯德哥尔摩 SE2",status:"待部署",spec:"6 GB / 200% CPU / 50 GB · Node.js generic",quota:"公网分配端口 1 个（26040）",exit:"—",speed:"Pterodactyl 容器，非真 VPS",note:"目前 Offline、空机。入口是 JS 启动文件，待确认 Startup / Files 页后写文件部署。"}
+];
+let filter="全部";
+function render(){
+ document.getElementById('tabs').innerHTML=["全部","在役","待部署"].map(t=>`<button class="tab ${filter===t?'on':''}" onclick="filter='${t}';render()">${t}</button>`).join('');
+ const q=document.getElementById('q').value.trim().toLowerCase();
+ const rows=servers.filter(s=>(filter==="全部"||s.status===filter)&&(!q||JSON.stringify(s).toLowerCase().includes(q)));
+ document.getElementById('list').innerHTML=rows.map(s=>`<div class="card"><div class="top"><div><span class="name">${s.name}</span><span class="role">${s.role}</span><div class="loc">${s.loc}</div></div><span class="badge ${s.status==='在役'?'on':'wait'}">${s.status}</span></div><div class="grid"><div><span>配置</span>${s.spec}</div><div><span>额度 / 限制</span>${s.quota}</div><div><span>出口 IP（脱敏）</span>${s.exit}</div><div><span>速度 / 类型</span>${s.speed}</div></div><div class="note">${s.note}</div></div>`).join('')||'<div class="note">没有匹配的服务器</div>';
+}
+render();
+</script>
+</body>
+</html>
