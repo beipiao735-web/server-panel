@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>服务器管理 — beipiao.abc.sd</title>
-<meta name="description" content="个人服务器舰队管理面板：5 台服务器的状态、配置、限额与到期提醒。">
+<meta name="description" content="个人服务器舰队管理面板：6 台服务器的状态、配置、限额与到期提醒。">
 <style>
 :root{--bg:#0f1419;--card:#1a222c;--card2:#212b36;--text:#e8eef4;--muted:#93a3b1;--line:#2c3947;--acc:#4da3ff;--ok:#35c48d;--warn:#ffb020;--bad:#ff6b6b}
 @media (prefers-color-scheme:light){:root{--bg:#f4f6f8;--card:#fff;--card2:#eef2f5;--text:#17212b;--muted:#5c6d7d;--line:#dde4ea;--acc:#0b6bcb}}
@@ -37,26 +37,27 @@ h1{font-size:24px;margin:0}.sub{color:var(--muted);font-size:13px;margin-top:6px
 <div class="sub">beipiao.abc.sd · 个人舰队面板 · 在役节点由每周巡检照看，异常才报<br>公开版已脱敏：节点完整域名、出口 IP 尾段、UUID 与订阅链接不放在公开页面上。</div>
 
 <div class="stats">
-<div class="stat"><b>5</b><span>服务器总数</span></div>
-<div class="stat"><b>4</b><span>在役节点</span></div>
-<div class="stat"><b>1</b><span>待部署</span></div>
-<div class="stat"><b>5</b><span>所在国家/地区</span></div>
+<div class="stat"><b>6</b><span>服务器总数</span></div>
+<div class="stat"><b>6</b><span>在役</span></div>
+<div class="stat"><b>0</b><span>待部署</span></div>
+<div class="stat"><b>6</b><span>所在国家/地区</span></div>
 </div>
 
-<div class="alert">⏰ <b>近期提醒：</b>Cloady 本月流量已用 4.8 / 10 GB，<b>2026-12-01</b> 重置；Weeny 试用档同日转 1 GB 永久免费，其节点走应用 HTTPS 通道、不受直通端口关闭影响；beipiao.abc.sd 本站上线即解除 Yunamo「长期不解析约 30 天删域名」风险（原期限约 2026-12-23）。</div>
+<div class="alert">⏰ <b>近期提醒：</b>Cloady 本月流量已用 4.8 / 10 GB，<b>2026-12-01</b> 重置；Weeny 试用档同日转 1 GB 永久免费，其节点走应用 HTTPS 通道、不受直通端口关闭影响；beipiao.abc.sd 本站上线即解除 Yunamo「长期不解析约 30 天删域名」风险（原期限约 2026-12-23）；AscSonoWay 免费期 <b>2026-12-25</b> 到期，助手自动免费续期。</div>
 
 <input class="search" id="q" placeholder="搜索：德国 / Hetzner / 限速 / 待部署…" oninput="render()">
 <div class="tabs" id="tabs"></div>
 <div id="list"></div>
 
-<div class="foot">数据核实于 2026-11-25 · Hostly / Cloady 为舰队定编，Weeny 为免费档 WS 节点，AgentScope 已上线（手机实测可用） · 其余平台已按决定停止，不再新增</div>
+<div class="foot">数据核实于 2026-11-25 · Hostly / Cloady 为舰队定编，Weeny 为免费档 WS 节点，AgentScope 与 Nodaroo 均已上线在用，AscSonoWay 为助手自用机 · 其余平台已按决定停止，不再新增</div>
 </div>
 <script>
 const servers=[
 {name:"Hostly",role:"主力节点",loc:"德国 纽伦堡 · Hetzner",status:"在役",spec:"Free 计划 · 50 Core·h / 100 GiB·h",quota:"1 TiB 流量 / 30 天",exit:"116.203.*.*",speed:"实测约 5.9 Mbps，三台最快",note:"重点照料：每周巡检排第一，盯额度。2026-11-23 复测连通 3/3、账单 €0.00。"},
 {name:"Cloady",role:"美国备用",loc:"美国 USW1",status:"在役",spec:"0.5 vCPU / 1 GB / 5 GB · 永久免费",quota:"出站 10 GB / 月 · CPU 4 小时 / 月",exit:"13.140.*.*",speed:"XHTTP，建连慢",note:"本月已用 4.8 GB，剩 5.2 GB 撑到 12-01 重置没问题；升 Nano 付费不可逆，未定。"},
 {name:"Weeny",role:"芬兰节点 · 真 VM",loc:"芬兰 赫尔辛基 · Hetzner",status:"在役",spec:"2 vCPU / 4 GB / 10 GB · Ubuntu 24.04 · root",quota:"试用约到 2026-12-01，后转 1 GB 永久免费",exit:"2.29.*.*",speed:"实测约 14.6 Mbps（10 MB / 5.5 秒）",note:"2026-11-24 按免费档打法部署：VLESS-WS 走应用 HTTPS 入口（官方 Xray 手工配），验收连通 3/3、出口赫尔辛基。闲置会睡，首连需唤醒；客户端须带 ALPN http/1.1 才通。"},
-{name:"Nodaroo",role:"待部署 · 面板容器",loc:"瑞典 斯德哥尔摩 SE2",status:"待部署",spec:"6 GB / 200% CPU / 50 GB · Node.js generic",quota:"公网分配端口 1 个（26040）",exit:"—",speed:"Pterodactyl 容器，非真 VPS",note:"目前 Offline、空机。入口是 JS 启动文件，待确认 Startup / Files 页后写文件部署。"},
+{name:"Nodaroo",role:"瑞典备用节点 · 面板容器",loc:"瑞典 斯德哥尔摩 SE2",status:"在役",spec:"6 GB / 200% CPU / 50 GB · Node.js generic",quota:"账号资源已全分配（6/6 GB · 200/200% · 50/50 GB · 插槽 1/1），无剩余可再部署",exit:"—",speed:"用户实测 193 ms · Pterodactyl 容器，非真 VPS",note:"VLESS+TLS 节点运行中、用户在用。2026-11-25 面板实测 Online、已连续运行 1 天 9 小时，CPU 0%、内存 3 MiB、磁盘 770 KiB，实际占用极低；累计流量约 180 MiB。余额 100 credits，面板未显示到期日。"},
+{name:"AscSonoWay",role:"助手自用机",loc:"加拿大 Alberta",status:"在役",spec:"1 vCPU / 512 MB / 16 GB · Debian 13 · LXC 容器",quota:"30 天一期 · 2026-12-25 到期 · 免费续期",exit:"纯 IPv6（已接 NAT64 中转访问 IPv4）",speed:"节点已拆 · 现为助手工作机",note:"2026-11-25 领取。已接 NAT64/DNS64 公共中转，出网可达 IPv4 站点（GitHub 实测 200）。原代理节点已按用户决定拆除，此机供助手自用；到期由助手自动免费续期，收费则停。"},
 {name:"AgentScope",role:"新加坡备用 · 沙箱",loc:"新加坡 ap-southeast-1",status:"在役",spec:"2 核 / 4 GB 沙箱 · QwenPaw v2.3.0",quota:"无公网 IP · 闲置约 48 小时休眠",exit:"47.84.*.*",speed:"VLESS+WS 走 Cloudflare 快速隧道",note:"2026-11-24 经 MCP 通道部署官方 sing-box + cloudflared，2026-11-25 用户手机实测可用。快速隧道域名随机、cloudflared 重启即变；沙箱休眠醒后进程无保证，只当应急备用。平台明文警告勿搭代理、违规封号。"}
 ];
 let filter="全部";
